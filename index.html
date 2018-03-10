@@ -1,38 +1,53 @@
 <html>
 <head>
-<script>
-
-</script>
+<style>
+input[type="button"] {
+	background-color: #DAF7A6;
+	width: 150px;
+	height: 40px;
+	font-size: 16px;
+}
+input[type="text"] {
+	font-size: 24px;
+}
+label {
+	font-size: 36px;
+}
+</style>
 </head>
 <body>
-	<table>
+	<table width="80%">
 		<tr><td>
-			1. Choose a Dictionary File: <input type="file" id="fileinput" />
+			<label>1. Choose a Dictionary File: </label>
+			<input type="file" id="fileinput"/>
 		</td></tr>
 		<tr><td>
-			2. 
-			<input type="button" onclick="speak()" value="Speak Again"/>
+			<label>2. Start listening to word: </label>
+			<input type="button" onclick="speak()" value="Speak Again" width="100"/>
 			&nbsp;
 			<input type="button" onclick="nextSpeech()" value="Next Speech"/>
 			&nbsp;
+			<br/>
 			<label id="doneIndicator" style="color: red">Not Yet Done</label>
 		</td></tr>
 		<tr><td></td></tr>
 		<tr><td>
-			<table border="1">
+			<table border="1" width="100%">
 				<tr>
-					<td valign="top">
-						Key in your answer here:<br/>
-						<textarea id="test" cols="40" rows="7" style="font-size: 24px;"></textarea>
+					<td valign="top" width="50%">
+						<label>Your answer:</label><br/>
+						<!--<textarea id="test" cols="40" rows="7" style="font-size: 24px;"></textarea>-->
+						<table id="testTable"></table>
 					</td>
-					<td>
+					<td valign="top" width="50%">
+						<label>Real answer:</label><br/>
 						<table id="answerTable" style="color:white"></table>
 					</td>
 				</tr>
 			</table>
 		</td></tr>
 		<tr><td>
-			3. Check answer
+			<label>3. Check answer</label>
 			<input type="button" onclick="showAnswer()" value="Show Answer"/>&nbsp;
 		</td></tr>
 		<tr><td></td></tr>
@@ -52,7 +67,13 @@
 				totalLine = allLines.length;
 
 				shuffledLines = shuffle(allLines);
-				console.log(shuffledLines);
+
+				var testTable = document.getElementById('testTable')
+				for(var i=(allLines.length-1) ; i>=0 ; i--) {
+					var row = testTable.insertRow(0)
+					var cell = row.insertCell(0)
+					cell.innerHTML = "<input id='test["+i+"]' type='text' length='20'/>"
+				}
 
 			};
 			reader.readAsText(file);
@@ -68,21 +89,20 @@
 			}
 		}
 
-		function moveCursorToTextArea() {
-			var textArea = document.getElementById('test');
-			textArea.focus();
-			moveCaretToEnd(textArea);
+		function moveCursorToTextArea(index) {
+			var textInput = document.getElementById('test['+index+']');
+			textInput.focus();
+			moveCaretToEnd(textInput);
 		}
 
 		function speak() {
-			console.log("speak "+shuffledLines[currentIndex]+" index "+currentIndex)
 			if('speechSynthesis' in window) {
 				var text = shuffledLines[currentIndex];
 			    var speech = new SpeechSynthesisUtterance(text);
 			    speech.lang = 'de-AT';
 			    window.speechSynthesis.speak(speech);
 			}
-			moveCursorToTextArea();
+			moveCursorToTextArea(currentIndex);
 		}
 
 		function shuffle(array) {
@@ -120,12 +140,12 @@
 				for(var line = (shuffledLines.length-1); line >= 0; line--){
 				var row = answerTable.insertRow(0)
 				var cell = row.insertCell(0)
-				cell.innerHTML = "<font size=\"18px\">"+shuffledLines[line]+"</font>";
+				cell.innerHTML = "<input type='text' length='20' value='"+shuffledLines[line]+"'/>"
 			}
 			document.getElementById("answerTable").style = 'color:black';
 		}
 
-		moveCursorToTextArea();
+		//moveCursorToTextArea();
 	</script>
 	</body>
 </html>

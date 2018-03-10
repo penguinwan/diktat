@@ -1,0 +1,132 @@
+<html>
+<head>
+<script>
+
+</script>
+</head>
+<body>
+	<table>
+		<tr><td>
+			1. Choose a Dictionary File: <input type="file" id="fileinput" />
+		</td></tr>
+		<tr><td>
+			2. 
+			<input type="button" onclick="speak()" value="Speak Again"/>
+			&nbsp;
+			<input type="button" onclick="nextSpeech()" value="Next Speech"/>
+			&nbsp;
+			<label id="doneIndicator" style="color: red">Not Yet Done</label>
+		</td></tr>
+		<tr><td></td></tr>
+		<tr><td>
+			<table border="1">
+				<tr>
+					<td valign="top">
+						Key in your answer here:<br/>
+						<textarea id="test" cols="40" rows="7" style="font-size: 24px;"></textarea>
+					</td>
+					<td>
+						<table id="answerTable" style="color:white"></table>
+					</td>
+				</tr>
+			</table>
+		</td></tr>
+		<tr><td>
+			3. Check answer
+			<input type="button" onclick="showAnswer()" value="Show Answer"/>&nbsp;
+		</td></tr>
+		<tr><td></td></tr>
+	</table>
+
+	<script>
+		var shuffledLines;
+		var totalLine;
+		var currentIndex = -1;
+		document.getElementById('fileinput').onchange = function() {
+			var file = this.files[0];
+
+			var reader = new FileReader();
+			reader.onload = function(progressEvent) {
+				// By lines
+				var allLines = this.result.split('\n');
+				totalLine = allLines.length;
+
+				shuffledLines = shuffle(allLines);
+				console.log(shuffledLines);
+
+			};
+			reader.readAsText(file);
+		}
+
+		function nextSpeech() {
+			currentIndex++;
+			speak(currentIndex);
+			if(currentIndex == (totalLine-1)) {
+				var doneIndicator = document.getElementById('doneIndicator');
+				doneIndicator.style = "color: green";
+				doneIndicator.innerText = "Done";
+			}
+		}
+
+		function moveCursorToTextArea() {
+			var textArea = document.getElementById('test');
+			textArea.focus();
+			moveCaretToEnd(textArea);
+		}
+
+		function speak() {
+			console.log("speak "+shuffledLines[currentIndex]+" index "+currentIndex)
+			if('speechSynthesis' in window) {
+				var text = shuffledLines[currentIndex];
+			    var speech = new SpeechSynthesisUtterance(text);
+			    speech.lang = 'de-AT';
+			    window.speechSynthesis.speak(speech);
+			}
+			moveCursorToTextArea();
+		}
+
+		function shuffle(array) {
+			var currentValue = array.length, temporaryValue, randomIndex;
+
+			// While there remain elements to shuffle...
+			while (0 !== currentValue) {
+
+				// Pick a remaining element...
+				randomIndex = Math.floor(Math.random() * currentValue);
+				currentValue -= 1;
+
+				// And swap it with the current element.
+				temporaryValue = array[currentValue];
+				array[currentValue] = array[randomIndex];
+				array[randomIndex] = temporaryValue;
+			}
+
+			return array;
+		}
+
+		function moveCaretToEnd(el) {
+			if (typeof el.selectionStart == "number") {
+				el.selectionStart = el.selectionEnd = el.value.length;
+			} else if (typeof el.createTextRange != "undefined") {
+				el.focus();
+				var range = el.createTextRange();
+				range.collapse(false);
+				range.select();
+			}
+		}
+
+		function showAnswer() {
+			var answerTable = document.getElementById('answerTable');
+				for(var line = (shuffledLines.length-1); line >= 0; line--){
+				var row = answerTable.insertRow(0)
+				var cell = row.insertCell(0)
+				cell.innerHTML = "<font size=\"18px\">"+shuffledLines[line]+"</font>";
+			}
+			document.getElementById("answerTable").style = 'color:black';
+		}
+
+		moveCursorToTextArea();
+	</script>
+	</body>
+</html>
+

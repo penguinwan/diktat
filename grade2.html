@@ -1,0 +1,123 @@
+<html>
+<head>
+<title>Diktat Grade 2</title>
+<style>
+input[type="button"] {
+	background-color: #DAF7A6;
+	width: 150px;
+	height: 40px;
+	font-size: 16px;
+}
+input[type="text"] {
+	font-size: 24px;
+}
+.trTitle {
+	font-size: 24px;
+	background-color: #CEC9C8;
+}
+.wrong {
+	background-color: #FBD6CE;
+}
+.correct {
+	background-color: #CEFBD7;
+}
+label {
+	font-size: 36px;
+}
+</style>
+</head>
+<body>
+	<input type="file" id="fileinput"/>
+	<table id="testTable" border="1">
+		<tr class="trTitle">
+			<td>Index</td>
+			<td>Singular (der / die / das)</td>
+			<td>Plural (Zweiten___)</td>
+			<td>Example</td>
+		</tr>
+	</table>
+	<input type="button" value="Check" id="verify" onclick="checkAnswer();"/>
+	<script>
+		var shuffledLines;
+		var totalLine;
+		var currentIndex = -1;
+		document.getElementById('fileinput').onchange = function() {
+			var file = this.files[0];
+
+			var reader = new FileReader();
+			reader.onload = function(progressEvent) {
+				// By lines
+				var allLines = this.result.split('\n');
+				totalLine = allLines.length;
+
+				//shuffledLines = shuffle(allLines);
+				shuffledLines = split(shuffle(allLines));
+				console.log(shuffledLines);
+
+				var testTable = document.getElementById('testTable');
+				for(var i=0 ; i<shuffledLines.length ; i++) {
+					let row = testTable.insertRow((i+1));
+					let exampleCell = row.insertCell(0);
+					let pluralCell = row.insertCell(0);
+					let singularCell = row.insertCell(0);
+					let indexCell = row.insertCell(0);
+					let singularAnswerHtml = "<input id='singularAnswer["+i+"]'' type='hidden' value='"+shuffledLines[i][0]+"''>";
+					let pluralAnswerHtml = "<input id='pluralAnswer["+i+"]' type='hidden' value='"+shuffledLines[i][1]+"'/>";
+					indexCell.innerHTML = '<label>'+(i+1)+'</label>';
+					singularCell.innerHTML = "<input id='singular["+i+"]' type='text' size='20'/>"+singularAnswerHtml;
+					pluralCell.innerHTML =  "<input id='plural["+i+"]' type='text' size='20'/>"+pluralAnswerHtml;
+					exampleCell.innerHTML = '<label>'+shuffledLines[i][2]+'</label>';
+				}
+
+				console.log(shuffledLines);
+
+			};
+			reader.readAsText(file);
+		}
+
+		function checkAnswer() {
+			for(var i=0 ; i<totalLine ; i++) {
+				let singularResult = document.getElementById("singular["+i+"]").value.trim();
+				let singularExpected = document.getElementById("singularAnswer["+i+"]").value.trim();
+				if(singularResult === singularExpected) {
+					document.getElementById("singular["+i+"]").classList.add("correct");
+				} else {
+					document.getElementById("singular["+i+"]").classList.add("wrong");
+				}
+
+				let pluralResult = document.getElementById("plural["+i+"]").value.trim();
+				let pluralExpected = document.getElementById("pluralAnswer["+i+"]").value.trim();
+				if(pluralResult === pluralExpected) {
+					document.getElementById("plural["+i+"]").classList.add("correct");
+				} else {
+					document.getElementById("plural["+i+"]").classList.add("wrong");
+				}
+			}
+		}
+
+		function split(array) {
+			return array.map(it => it.split('|'));
+		}
+
+		function shuffle(array) {
+			var currentValue = array.length, temporaryValue, randomIndex;
+
+			// While there remain elements to shuffle...
+			while (0 !== currentValue) {
+
+				// Pick a remaining element...
+				randomIndex = Math.floor(Math.random() * currentValue);
+				currentValue -= 1;
+
+				// And swap it with the current element.
+				temporaryValue = array[currentValue];
+				array[currentValue] = array[randomIndex];
+				array[randomIndex] = temporaryValue;
+			}
+
+			return array;
+		}
+	</script>
+</body>
+
+</html>

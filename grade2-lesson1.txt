@@ -1,0 +1,8 @@
+die Schere|die Scheren|Wir schneiden das Papier mit einer ___
+die Schule|die Schulen|Ich gehe gerne in die ___
+das Mädchen|die Mädchen|Lena ist kein Junge, sondern ein ___
+der Füller|die Füller|Der ___ schreibt mit Tinte
+die Klasse|die Klassen|Wir sind jetzt in der zweiten ___
+der Junge|die Jungen|Lukas ist kein Mädchen, sondern ein ___
+das Bild|die Bilder|Das ___ hängt im Museum
+die Aufgabe|die Aufgaben|Wir lösen eine schwierige ___
